@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react'
 
 // The living gradient behind the page, painted from the scheme's three wash colors (--wash-1..3).
@@ -35,6 +36,11 @@ const SHIMMER = [
   { c: 1, size: '56vmax', left: '40%', top: '55%', o: [0.05, 0.65, 0.05], dur: 30 },
   { c: 3, size: '50vmax', left: '-15%', top: '-10%', o: [0.55, 0.05, 0.55], dur: 34 },
 ]
+// A shimmer starts each loop at a middling strength (not at its weakest), so a reload opens at the same
+// color intensity it settles into instead of dipping and then filling in.
+const SHIMMER_START = 0.35
+const shimmerCycle = (o) => [SHIMMER_START, Math.max(...o), Math.min(...o), SHIMMER_START]
+
 // Mixing layers tied to page scroll. `fade` is the layer's opacity at the top, middle and bottom of the
 // page; `slide` is how far it drifts sideways (in viewport widths) from top to bottom. Together they
 // hand the view from one color to the next as you scroll.
@@ -164,7 +170,7 @@ function Fluid() {
         {SHIMMER.map((b, i) => (
           <motion.div
             key={`shimmer${i}`}
-            animate={reduced ? { opacity: 0.3 } : { opacity: b.o, x: [0, 40, 0], y: [0, -30, 0] }}
+            animate={reduced ? { opacity: SHIMMER_START } : { opacity: shimmerCycle(b.o), x: [0, 40, 0], y: [0, -30, 0] }}
             transition={loop(b.dur)}
             style={{
               position: 'absolute',
@@ -173,7 +179,7 @@ function Fluid() {
               width: b.size,
               height: b.size,
               borderRadius: '50%',
-              opacity: 0.3,
+              opacity: SHIMMER_START,
               background: radial(b.c, 30),
               willChange: 'opacity, transform',
             }}
@@ -189,7 +195,20 @@ function Fluid() {
   )
 }
 
+// index.html carries a static copy of the washes (#boot-backdrop) so the very first paint is already
+// colored. It stays at full strength while this backdrop fades in over it, then fades out underneath,
+// so the color never dips on a reload.
+function retireBootBackdrop() {
+  const boot = document.getElementById('boot-backdrop')
+  if (!boot) return undefined
+  boot.style.transition = 'opacity 0.8s ease 0.6s'
+  boot.style.opacity = '0'
+  const timer = setTimeout(() => boot.remove(), 1500)
+  return () => clearTimeout(timer)
+}
+
 export default function Backdrop() {
+  useEffect(retireBootBackdrop, [])
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
       <motion.div className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.9 }}>

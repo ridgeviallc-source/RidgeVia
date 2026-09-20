@@ -20,6 +20,9 @@
   --shade-b: rgba(66, 72, 88, 0.18);
   --shade-c: rgba(66, 72, 88, 0.25);
   --lit-a: rgba(255, 255, 255, 0.95);
+  --wash-1: #FAB08B;
+  --wash-2: #90CEAA;
+  --wash-3: #C2BAF4;
   --font-body: "Geist";
   --font-head: "Mona Sans";
   --health: #087F5B;
@@ -77,6 +80,43 @@ body {
   font-size: 17px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+}
+
+/* First-paint backdrop. The animated backdrop is drawn by script, so without this the page would
+   open flat gray and the color would fade in. This static version of the same three washes paints
+   with the CSS, and Backdrop.jsx crossfades it into the animated one and then removes it. */
+#boot-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  pointer-events: none;
+  opacity: 0.55;
+  background:
+    radial-gradient(ellipse 50vmax 40vmax at 48% 10%, var(--wash-1) 0%, var(--wash-1) 35%, transparent 100%),
+    radial-gradient(ellipse 62vmax 50vmax at 8% 62%, var(--wash-2) 0%, var(--wash-2) 35%, transparent 100%),
+    radial-gradient(ellipse 62vmax 50vmax at 92% 42%, var(--wash-3) 0%, var(--wash-3) 35%, transparent 100%),
+    radial-gradient(ellipse 45vmax 36vmax at 96% 104%, var(--wash-1) 0%, var(--wash-1) 30%, transparent 100%);
+}
+
+/* The sticky navbar: a full-width, square-edged bar of frosted glass over the live backdrop, so it carries the
+   same color collage as the page while anything scrolling under it is softened, never sharp behind the
+   text. Embossed by a light top edge, a shaded lower edge and a raised drop onto the page. The white tint
+   with the full-strength link colors keeps the nav text legible even over a dark headline passing beneath. */
+.nav-bar {
+  background: rgba(255, 255, 255, 0.3);
+  -webkit-backdrop-filter: blur(28px) saturate(1.9);
+  backdrop-filter: blur(28px) saturate(1.9);
+  box-shadow:
+    inset 0 1px 0 var(--lit-a),
+    inset 0 -2px 4px var(--shade-c),
+    0 10px 26px var(--shade-a);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .nav-bar {
+    background: var(--background);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
 }
 
 /* Backgrounds sit on a fixed layer behind everything. Surfaces are transparent, so the
