@@ -4,7 +4,7 @@ import Console from './Console'
 import NeuButton from './NeuButton'
 import Wordmark from './Wordmark'
 import { useDesign } from './design'
-import { ChartIcon, ExtIcon, FlagIcon, InboxIcon, MailIcon, TrendIcon, UserPlusIcon, UsersIcon } from './icons'
+import { BrainIcon, ExtIcon, FlagIcon, InboxIcon, MailIcon, UserPlusIcon } from './icons'
 import { ease } from './neu'
 
 const container = 'mx-auto w-full max-w-[1200px] px-5 sm:px-8'
@@ -35,9 +35,11 @@ const Groove = ({ className = '' }) => <div aria-hidden="true" className={`round
 
 const facts = [
   { name: 'Triage', icon: <InboxIcon size={24} />, text: 'Reads every message, ranks urgency, extracts the key facts, and pages the right teammate.' },
-  { name: 'Patients', icon: <UsersIcon size={24} />, text: 'Knows every patient. Ask a question and get an answer from the full record.' },
-  { name: 'Analytics', icon: <ChartIcon size={24} />, text: 'Ask about your practice in plain English and get answers from your own data.' },
-  { name: 'Growth', icon: <TrendIcon size={24} />, text: 'See what is driving growth and what it takes to scale.' },
+  {
+    name: 'Knows your practice',
+    icon: <BrainIcon size={24} />,
+    text: 'Every patient, message, and number feeds one system that knows how your practice runs. Ask it anything, from one chart to what drives growth. It works like a second you.',
+  },
   { name: 'Onboarding', icon: <UserPlusIcon size={24} />, text: 'Gets new patients and new staff up to speed faster.' },
   {
     name: 'Safety',
@@ -90,7 +92,7 @@ export default function App() {
                 Simply scale your practice.
               </motion.h1>
             </motion.div>
-            <dl className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+            <dl className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:gap-6">
               {facts.map((f) => (
                 <div key={f.name} className="flex flex-col gap-4 rounded-[28px] p-5 shadow-raised sm:p-6">
                   <span className="grid size-12 shrink-0 place-items-center rounded-full text-link shadow-raised-sm">{f.icon}</span>
