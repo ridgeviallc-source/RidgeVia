@@ -62,6 +62,17 @@ export const MailIcon = (p) => (
     <path d="M3 7l9 7 9-7" />
   </Svg>
 )
+export const FileIcon = (p) => (
+  <Svg {...p}>
+    <path d="M6 3h8l4 4v14H6z" />
+    <path d="M14 3v4h4" />
+  </Svg>
+)
+export const FolderIcon = (p) => (
+  <Svg {...p}>
+    <path d="M3 7h6l2 2h10v10H3z" />
+  </Svg>
+)
 export const UsersIcon = (p) => (
   <Svg {...p}>
     <circle cx="9" cy="8" r="3.5" />

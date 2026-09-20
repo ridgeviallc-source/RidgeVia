@@ -1,164 +1,131 @@
-import { useId } from 'react'
 import { motion } from 'motion/react'
-import { useDesign } from './design'
 import { ease } from './neu'
 
-// Small, honest charts drawn from theme tokens, so they follow every color scheme and typeface.
-// Numbers use the "data" font (a monospace when one is chosen) with tabular figures.
+// Two charts drawn from theme tokens, so they follow the color scheme. Numbers use the "data" font
+// (a monospace) with tabular figures. Each one builds itself when it mounts: the clinOS demo mounts
+// them at the moment the agent "produces" them.
 export const DATA = { fontFamily: 'var(--font-data, var(--font-head))', fontVariantNumeric: 'tabular-nums' }
 
-function smooth(pts) {
-  let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`
-  for (let i = 1; i < pts.length - 1; i++) {
-    const mx = (pts[i][0] + pts[i + 1][0]) / 2
-    const my = (pts[i][1] + pts[i + 1][1]) / 2
-    d += ` Q${pts[i][0].toFixed(1)} ${pts[i][1].toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)}`
-  }
-  const l = pts[pts.length - 1]
-  return `${d} L${l[0].toFixed(1)} ${l[1].toFixed(1)}`
-}
+const txt = (size, extra = {}) => ({ fontSize: size, style: { fill: 'var(--muted-foreground)', ...DATA }, ...extra })
+const pop = (delay) => ({ initial: { scale: 0 }, animate: { scale: 1 }, transition: { duration: 0.35, ease, delay }, style: { transformBox: 'fill-box', transformOrigin: 'center' } })
 
-const draw = { initial: { pathLength: 0 }, animate: { pathLength: 1 }, transition: { duration: 1.1, ease } }
-
-/* A tiny trend line for stat tiles. `alert` colors the end dot as a warning. */
-export function Spark({ values, alert = false, w = 96, h = 34 }) {
-  const min = Math.min(...values)
-  const max = Math.max(...values)
-  const span = max - min || 1
-  const pts = values.map((v, i) => [3 + (i / (values.length - 1)) * (w - 6), 4 + (1 - (v - min) / span) * (h - 8)])
-  const last = pts[pts.length - 1]
+/* Swimlane of medication requests: one row per drug, one dot per request, dashed red where a refill ran late. */
+export function MedTimeline({ rows }) {
+  const W = 400
+  const left = 92
+  const top = 24
+  const rowH = 44
+  const H = top + rows.length * rowH + 28
+  const x = (m) => left + (m / 12) * (W - left - 14)
+  const months = ['Oct', 'Dec', 'Feb', 'Apr', 'Jun', 'Aug']
+  let dot = 0
   return (
-    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} aria-hidden="true" className="shrink-0">
-      <motion.path d={smooth(pts)} fill="none" style={{ stroke: 'var(--foreground)' }} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...draw} />
-      <circle cx={last[0]} cy={last[1]} r="3.6" style={{ fill: alert ? 'var(--destructive)' : 'var(--health)' }} />
-    </svg>
-  )
-}
-
-/* Line chart with soft grid, optional target band, area fill, and an emphasized last point. */
-export function LineChart({ values, labels, band, bandLabel = 'Target', alert = false, label, h = 168 }) {
-  const gid = useId().replace(/:/g, '')
-  const W = 340
-  const pad = { l: 10, r: 14, t: 14, b: 26 }
-  const lo = Math.min(...values, band ? band[0] : Infinity)
-  const hi = Math.max(...values, band ? band[1] : -Infinity)
-  const span = hi - lo || 1
-  const min = lo - span * 0.18
-  const max = hi + span * 0.18
-  const x = (i) => pad.l + (i / (values.length - 1)) * (W - pad.l - pad.r)
-  const y = (v) => pad.t + (1 - (v - min) / (max - min)) * (h - pad.t - pad.b)
-  const pts = values.map((v, i) => [x(i), y(v)])
-  const line = smooth(pts)
-  const last = pts[pts.length - 1]
-  const grid = [0.2, 0.5, 0.8].map((t) => pad.t + t * (h - pad.t - pad.b))
-  return (
-    <svg viewBox={`0 0 ${W} ${h}`} role="img" aria-label={label} className="mt-3 block h-auto w-full">
-      <defs>
-        <linearGradient id={gid} x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" style={{ stopColor: 'var(--health)', stopOpacity: 0.32 }} />
-          <stop offset="100%" style={{ stopColor: 'var(--health)', stopOpacity: 0 }} />
-        </linearGradient>
-      </defs>
-      {grid.map((g) => (
-        <line key={g} x1={pad.l} x2={W - pad.r} y1={g} y2={g} style={{ stroke: 'var(--foreground)' }} strokeOpacity="0.1" strokeDasharray="3 5" />
-      ))}
-      {band && (
-        <g>
-          <rect x={pad.l} y={y(band[1])} width={W - pad.l - pad.r} height={y(band[0]) - y(band[1])} rx="6" style={{ fill: 'var(--health)' }} fillOpacity="0.14" />
-          <text x={W - pad.r - 6} y={y(band[1]) + 13} textAnchor="end" fontSize="11.5" style={{ fill: 'var(--muted-foreground)', ...DATA }}>
-            {bandLabel}
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Medication requests over twelve months, with one long gap in the metformin row" className="block h-auto w-full">
+      {months.map((m, i) => (
+        <g key={m}>
+          <line x1={x(i * 2)} x2={x(i * 2)} y1={top - 8} y2={H - 26} style={{ stroke: 'var(--foreground)' }} strokeOpacity="0.1" strokeDasharray="3 5" />
+          <text x={x(i * 2)} y={H - 8} textAnchor="middle" {...txt(11.5)}>
+            {m}
           </text>
         </g>
-      )}
-      <motion.path d={`${line} L${last[0]} ${h - pad.b} L${pts[0][0]} ${h - pad.b}Z`} style={{ fill: `url(#${gid})` }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.5 }} />
-      <motion.path d={line} fill="none" style={{ stroke: 'var(--foreground)' }} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" {...draw} />
-      {pts.map(([px, py], i) => (
-        <circle key={i} cx={px} cy={py} r={i === pts.length - 1 ? 5 : 2.8} style={{ fill: i === pts.length - 1 ? (alert ? 'var(--destructive)' : 'var(--health)') : 'var(--foreground)' }} />
       ))}
-      {labels && [0, labels.length - 1].map((i) => (
-        <text key={i} x={x(i)} y={h - 6} textAnchor={i === 0 ? 'start' : 'end'} fontSize="11.5" style={{ fill: 'var(--muted-foreground)', ...DATA }}>
-          {labels[i]}
-        </text>
-      ))}
+      {rows.map((row, r) => {
+        const cy = top + r * rowH + rowH / 2
+        const segs = row.at.slice(1).map((m, i) => ({ a: row.at[i], b: m }))
+        return (
+          <g key={row.name}>
+            <text x="0" y={cy + 4} fontSize="13" fontWeight="600" style={{ fill: 'var(--foreground)' }}>
+              {row.name}
+            </text>
+            {segs.map(({ a, b }) => {
+              const gap = b - a > 1.5
+              return (
+                <g key={a}>
+                  <motion.line
+                    x1={x(a)}
+                    x2={x(b)}
+                    y1={cy}
+                    y2={cy}
+                    style={{ stroke: gap ? 'var(--destructive)' : 'var(--foreground)' }}
+                    strokeOpacity={gap ? 0.9 : 0.2}
+                    strokeWidth={gap ? 2.2 : 1.5}
+                    strokeDasharray={gap ? '5 4' : undefined}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.4, delay: 0.2 + dot * 0.04 }}
+                  />
+                  {gap && (
+                    <motion.text x={(x(a) + x(b)) / 2} y={cy - 10} textAnchor="middle" fontSize="11.5" fontWeight="700" style={{ fill: 'var(--destructive-ink)', ...DATA }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }}>
+                      {Math.round((b - a) * 30)}-day gap
+                    </motion.text>
+                  )}
+                </g>
+              )
+            })}
+            {row.at.map((m, i) => {
+              const late = i > 0 && m - row.at[i - 1] > 1.5
+              return <motion.circle key={m} cx={x(m)} cy={cy} r="5" {...pop(0.15 + dot++ * 0.04)} style={{ fill: late ? 'var(--destructive)' : 'var(--health)', transformBox: 'fill-box', transformOrigin: 'center' }} />
+            })}
+          </g>
+        )
+      })}
     </svg>
   )
 }
 
-/* Raised bar columns; the latest bar is filled with the signal color. */
-export function Bars({ values, labels, unit = '' }) {
-  const { neu } = useDesign()
-  const max = Math.max(...values)
-  const last = values.length - 1
+/* Horizontal box-and-whisker plot with the raw points behind each box. The first and last groups are the comparison. */
+export function BoxPlot({ groups }) {
+  const W = 400
+  const left = 124
+  const right = 20
+  const top = 12
+  const rowH = 60
+  const H = top + groups.length * rowH + 30
+  const max = Math.ceil(Math.max(...groups.map((g) => g.stats.max)) / 5) * 5
+  const x = (v) => left + (v / max) * (W - left - right)
+  const ticks = Array.from({ length: max / 5 + 1 }, (_, i) => i * 5)
+  const fmt = (v) => (Number.isInteger(v) ? String(v) : v.toFixed(1))
+  const fill = (i) => (i === 0 ? 'var(--health)' : i === groups.length - 1 ? 'var(--destructive)' : 'var(--foreground)')
+  const alpha = (i) => (i === 0 || i === groups.length - 1 ? 0.3 : 0.1)
   return (
-    <div className="mt-4 flex h-[168px] items-end gap-2.5 sm:gap-3" role="img" aria-label={`Bar chart: ${labels.map((l, i) => `${l} ${values[i]}`).join(', ')}`}>
-      {values.map((v, i) => (
-        <div key={labels[i]} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1.5">
-          <span className="text-[12px] font-bold" style={{ ...DATA, opacity: i === last ? 1 : 0 }}>
-            {v}
-            {unit}
-          </span>
-          <motion.div
-            initial={{ scaleY: 0 }}
-            animate={{ scaleY: 1 }}
-            transition={{ duration: 0.7, ease, delay: 0.1 + i * 0.07 }}
-            className="w-full max-w-10 rounded-xl"
-            style={{
-              height: `${Math.max(8, (v / max) * 108)}px`,
-              transformOrigin: 'bottom',
-              boxShadow: neu.raisedSm,
-              backgroundColor: i === last ? 'var(--health)' : 'transparent',
-            }}
-          />
-          <span className="text-[12px] text-muted-foreground" style={DATA}>
-            {labels[i]}
-          </span>
-        </div>
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Box plot of days from inquiry to first visit, by referral source" className="block h-auto w-full">
+      {ticks.map((t) => (
+        <g key={t}>
+          <line x1={x(t)} x2={x(t)} y1={top} y2={H - 26} style={{ stroke: 'var(--foreground)' }} strokeOpacity="0.1" strokeDasharray="3 5" />
+          <text x={x(t)} y={H - 8} textAnchor="middle" {...txt(11.5)}>
+            {t}
+          </text>
+        </g>
       ))}
-    </div>
-  )
-}
-
-/* Semicircle gauge with a big centered figure. */
-export function Gauge({ value, caption }) {
-  return (
-    <div className="mt-3">
-      <svg viewBox="0 0 200 118" role="img" aria-label={`${value} percent, ${caption}`} className="block h-auto w-full max-w-[280px]">
-        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" style={{ stroke: 'var(--foreground)' }} strokeOpacity="0.13" strokeWidth="16" strokeLinecap="round" />
-        <motion.path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" style={{ stroke: 'var(--health)' }} strokeWidth="16" strokeLinecap="round" initial={{ pathLength: 0 }} animate={{ pathLength: value / 100 }} transition={{ duration: 1.2, ease }} />
-        <text x="100" y="92" textAnchor="middle" fontSize="38" fontWeight="700" style={{ fill: 'var(--foreground)', ...DATA }}>
-          {value}%
-        </text>
-      </svg>
-      <p className="mt-1 text-[14px] text-muted-foreground" style={DATA}>
-        {caption}
-      </p>
-    </div>
-  )
-}
-
-/* Horizontal share bars in inset tracks. */
-export function HBars({ rows }) {
-  return (
-    <ul className="mt-4 flex flex-col gap-3.5">
-      {rows.map(([name, pct], i) => (
-        <li key={name}>
-          <div className="flex items-baseline justify-between gap-3 text-[15px]">
-            <span className="font-semibold">{name}</span>
-            <span className="font-bold" style={DATA}>
-              {pct}%
-            </span>
-          </div>
-          <div className="mt-1.5 h-3 overflow-hidden rounded-full shadow-well">
-            <motion.div
-              className="h-full origin-left rounded-full"
-              style={{ width: `${pct}%`, backgroundColor: i === 0 ? 'var(--health)' : 'var(--foreground)', opacity: i === 0 ? 1 : 0.5 }}
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.9, ease, delay: 0.1 + i * 0.08 }}
-            />
-          </div>
-        </li>
-      ))}
-    </ul>
+      {groups.map((g, i) => {
+        const cy = top + i * rowH + rowH / 2
+        const s = g.stats
+        const d = i * 0.28
+        return (
+          <g key={g.name}>
+            <text x="0" y={cy - 2} fontSize="13" fontWeight="600" style={{ fill: 'var(--foreground)' }}>
+              {g.name}
+            </text>
+            <text x="0" y={cy + 14} fontSize="11" style={{ fill: 'var(--muted-foreground)', ...DATA }}>
+              n = {s.n}
+            </text>
+            <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: d }}>
+              {g.values.map((v, j) => (
+                <circle key={j} cx={x(v)} cy={cy + (((j * 37) % 17) - 8) * 1.6} r="1.9" style={{ fill: 'var(--foreground)' }} fillOpacity="0.28" />
+              ))}
+            </motion.g>
+            <motion.path d={`M${x(s.whiskerLow)} ${cy} H${x(s.whiskerHigh)} M${x(s.whiskerLow)} ${cy - 7} V${cy + 7} M${x(s.whiskerHigh)} ${cy - 7} V${cy + 7}`} fill="none" style={{ stroke: 'var(--foreground)' }} strokeWidth="1.6" strokeLinecap="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.7, ease, delay: 0.25 + d }} />
+            <motion.rect x={x(s.q1)} y={cy - 15} width={x(s.q3) - x(s.q1)} height="30" rx="7" style={{ fill: fill(i), fillOpacity: alpha(i), stroke: 'var(--foreground)', transformBox: 'fill-box', transformOrigin: 'center' }} strokeWidth="1.6" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.6, ease, delay: 0.35 + d }} />
+            <motion.line x1={x(s.med)} x2={x(s.med)} y1={cy - 15} y2={cy + 15} style={{ stroke: 'var(--foreground)' }} strokeWidth="3.4" strokeLinecap="round" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.75 + d }} />
+            {s.outliers.map((v, j) => (
+              <motion.circle key={j} cx={x(v)} cy={cy} r="3.4" fill="none" style={{ stroke: 'var(--foreground)', transformBox: 'fill-box', transformOrigin: 'center' }} strokeWidth="1.5" {...pop(0.9 + d + j * 0.03)} />
+            ))}
+            <motion.text x={x(s.whiskerHigh) + 8} y={cy - 9} fontSize="12" fontWeight="700" style={{ fill: 'var(--foreground)', ...DATA }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 + d }}>
+              {fmt(s.med)}d
+            </motion.text>
+          </g>
+        )
+      })}
+    </svg>
   )
 }
