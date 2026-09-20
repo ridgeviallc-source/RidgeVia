@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+/* Step 1 (tailwind-v4-shadcn): tokens at root level, never inside @layer.
+   These are the Graphite fallbacks for first paint. design.jsx overwrites every one of them
+   from schemes.json at startup, so switching color scheme is a single write. */
+:root {
+  --background: #E8E9EC;
+  --foreground: #15171A;
+  --muted-foreground: #4B5058;
+  --primary: #15171A;
+  --primary-foreground: #FFFFFF;
+  --link: #15171A;
+  --success-ink: #166534;
+  --destructive: #D92D20;
+  --destructive-foreground: #FFFFFF;
+  --destructive-ink: #B42318;
+  --glow: rgba(255, 255, 255, 0.75);
+  --vignette: rgba(70, 76, 92, 0.12);
+  --shade-a: rgba(66, 72, 88, 0.2);
+  --shade-b: rgba(66, 72, 88, 0.18);
+  --shade-c: rgba(66, 72, 88, 0.25);
+  --lit-a: rgba(255, 255, 255, 0.95);
+  --font-body: "Geist";
+  --font-head: "Mona Sans";
+  --health: #087F5B;
+  --wm-ink: #000000;
+  --grain: none;
+  --grain-opacity: 0.13;
+}
+
+/* Step 2: map every token to a utility (bg-primary, text-link, ...). */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-link: var(--link);
+  --color-success-ink: var(--success-ink);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-ink: var(--destructive-ink);
+  --color-health: var(--health);
+}
+
+/* Typefaces are variables too, so the design panel can swap them live. */
+@theme inline {
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-head), var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* One light source, top-left. The animated twins of these live in neu.js.
+   Written as utilities (not @theme shadows) so the var() colors pass through untouched. */
+@utility shadow-raised {
+  box-shadow: 9px 9px 20px var(--shade-a), -9px -9px 20px var(--lit-a);
+}
+@utility shadow-raised-sm {
+  box-shadow: 5px 5px 12px var(--shade-a), -5px -5px 12px var(--lit-a);
+}
+@utility shadow-well {
+  box-shadow: inset 6px 6px 14px var(--shade-b), inset -6px -6px 14px var(--lit-a);
+}
+@utility shadow-groove {
+  box-shadow: inset 1px 1px 2px var(--shade-c), inset -1px -1px 2px var(--lit-a);
+}
+
+/* Step 3: base styles. Deliberately UNLAYERED: the artifact shell ships an unlayered
+   body rule (off-white ground, 14px system font), and unlayered beats @layer base. */
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Backgrounds sit on a fixed layer behind everything. Surfaces are transparent, so the
+   same page ground shows through every raised and inset shape. Nothing here goes behind text
+   at more than a whisper: the old contour lines were the readability problem. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+html[data-bg="glow"] body::before {
+  background:
+    radial-gradient(1100px 680px at 8% -6%, var(--glow), transparent 62%),
+    radial-gradient(900px 640px at 100% 104%, var(--vignette), transparent 60%);
+}
+html[data-bg="grain"] body::before {
+  background-image: var(--grain);
+  opacity: var(--grain-opacity);
+}
+
+:focus-visible {
+  outline: 3px solid var(--foreground);
+  outline-offset: 3px;
+}
+::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

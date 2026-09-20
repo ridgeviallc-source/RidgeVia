@@ -1,0 +1,48 @@
+{
+  "graphite": {
+    "label": "Graphite",
+    "note": "Black on white",
+    "dark": false,
+    "swatch": [
+      "#E8E9EC",
+      "#15171A",
+      "#D92D20"
+    ],
+    "vars": {
+      "--background": "#E8E9EC",
+      "--foreground": "#15171A",
+      "--muted-foreground": "#3A3F47",
+      "--primary": "#15171A",
+      "--primary-foreground": "#FFFFFF",
+      "--link": "#15171A",
+      "--success-ink": "#0F5132",
+      "--destructive": "#D92D20",
+      "--destructive-foreground": "#FFFFFF",
+      "--destructive-ink": "#9A1B12",
+      "--glow": "rgba(255,255,255,0.75)",
+      "--vignette": "rgba(70,76,92,0.12)"
+    },
+    "shade": [
+      66,
+      72,
+      88
+    ],
+    "shadeK": 1,
+    "lit": [
+      255,
+      255,
+      255
+    ],
+    "litA": 0.95,
+    "wash": [
+      "#FAB08B",
+      "#90CEAA",
+      "#C2BAF4"
+    ],
+    "hues": [
+      "#FF9E6D",
+      "#5FBF86",
+      "#8E7CFF"
+    ]
+  }
+}
