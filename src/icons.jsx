@@ -22,6 +22,12 @@ export const ExtIcon = (p) => (
     <path d="M8 7h9v9" />
   </Svg>
 )
+export const ArrowRightIcon = (p) => (
+  <Svg stroke={2.3} {...p}>
+    <path d="M5 12h14" />
+    <path d="M13 6l6 6-6 6" />
+  </Svg>
+)
 export const InboxIcon = (p) => (
   <Svg {...p}>
     <path d="M3 13h5l1.5 3h5L16 13h5" />

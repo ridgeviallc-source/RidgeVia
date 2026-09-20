@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import NeuButton from './NeuButton'
 import { MESSAGES } from './data'
 import { useDesign } from './design'
-import { ChevronIcon, CheckIcon, ClockIcon, FlagIcon, PenIcon } from './icons'
+import { ArrowRightIcon, ChevronIcon, CheckIcon, ClockIcon, FlagIcon, PenIcon } from './icons'
 import { spring } from './neu'
 
 const Groove = () => <div aria-hidden="true" className="h-[3px] w-full rounded-full shadow-groove" />
@@ -22,6 +22,22 @@ function Urgency({ urgent }) {
   )
 }
 
+// The action Base Camp took, not just a summary of it: who it handed the message to, and that it is done.
+function Routed({ to }) {
+  return (
+    <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+      <span className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[16px] font-bold shadow-raised-sm">
+        <ArrowRightIcon size={16} />
+        {to}
+      </span>
+      <span className="inline-flex items-center gap-1.5 text-sm font-bold text-success-ink">
+        <CheckIcon size={16} />
+        Done
+      </span>
+    </span>
+  )
+}
+
 // The triage view: a message list on the left, what Base Camp did with the selected message on the right.
 export default function TriagePane() {
   const { neu } = useDesign()
@@ -35,7 +51,7 @@ export default function TriagePane() {
     ['Intent', m.intent],
     ['Urgency', <Urgency key="u" urgent={m.urgent} />],
     ['Key facts', m.facts],
-    ['Routed to', m.routedTo],
+    ['Routed to', <Routed key="r" to={m.routedTo} />, true],
   ]
 
   return (
@@ -97,11 +113,11 @@ export default function TriagePane() {
 
                 <h3 className="mt-6 font-display text-[17px] font-bold">What Base Camp found</h3>
                 <dl className="mt-3 flex flex-col gap-2.5">
-                  {rows.map(([label, value], i) => (
+                  {rows.map(([label, value, strong], i) => (
                     <div key={label} className="flex flex-col gap-2.5">
                       {i > 0 && <Groove />}
                       <div className="grid grid-cols-[84px_minmax(0,1fr)] items-center gap-3">
-                        <dt className="text-sm text-muted-foreground">{label}</dt>
+                        <dt className={`text-sm ${strong ? 'font-bold text-foreground' : 'text-muted-foreground'}`}>{label}</dt>
                         <dd className="text-[16px] leading-snug">{value}</dd>
                       </div>
                     </div>

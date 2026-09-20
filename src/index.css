@@ -100,29 +100,24 @@ html[data-bg="grain"] body::before {
 }
 
 /* Glossy "Health": a deep top-to-bottom shading (the top stop is the base color, so contrast on the
-   peach part of the background holds), an emboss highlight under the letters, and a light sweep that
-   passes every few seconds. The sweep is the only part that lightens the text, and only briefly. */
+   peach part of the background holds), an emboss highlight under the letters, and a light band that
+   sweeps across the word. Wordmark.jsx drives --sheen (the band's center, in word-widths: 0 is the
+   left edge, 1 the right edge) on its own random schedule. At rest the band sits off the left edge. */
 .health-gloss {
+  --sheen: -1;
   padding: 0.1em 0.06em;
   margin: -0.1em -0.06em;
   background-image:
     linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.9) 50%, transparent 58%),
     linear-gradient(180deg, #087f5b 0%, #06664a 52%, #043f2e 100%);
   background-size: 260% 100%, 100% 100%;
-  background-position: 160% 0, 0 0;
+  /* the band image is 2.6x the word wide: center c sits at a position of (1.3 - c) / 1.6 */
+  background-position: calc((1.3 - var(--sheen)) / 1.6 * 100%) 0, 0 0;
   background-repeat: no-repeat;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.7)) drop-shadow(0 2px 3px rgba(4, 63, 46, 0.28));
-  animation: health-sheen 30s ease-in-out infinite;
-}
-@keyframes health-sheen {
-  0%, 60% { background-position: 160% 0, 0 0; }
-  100% { background-position: -60% 0, 0 0; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .health-gloss { animation: none; }
 }
 
 /* The clinOS panel scrolls on its own: a thin themed scrollbar, and edges that fade so the cut-off reads as "more". */
