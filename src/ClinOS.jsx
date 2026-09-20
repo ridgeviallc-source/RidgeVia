@@ -251,7 +251,7 @@ export default function ClinOS() {
         role="region"
         aria-label="clinOS conversations. Scroll to see more."
         tabIndex={0}
-        className="clinos-scroll h-[min(74vh,720px)] overflow-y-auto pr-1.5"
+        className="clinos-scroll h-[clamp(300px,calc(100svh-22rem),720px)] overflow-y-auto pr-1.5"
       >
         <div className="flex flex-col gap-6 py-2">
           <EmailScene />

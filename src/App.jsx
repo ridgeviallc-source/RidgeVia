@@ -1,13 +1,17 @@
+import { useEffect } from 'react'
 import { motion } from 'motion/react'
 import Backdrop from './Backdrop'
 import Console from './Console'
 import NeuButton from './NeuButton'
 import Wordmark from './Wordmark'
+import campfire from './campfire-logo.png'
 import { useDesign } from './design'
-import { ChartIcon, ExtIcon, FlagIcon, InboxIcon, MailIcon, TrendIcon, UserPlusIcon, UsersIcon } from './icons'
+import { BrainIcon, ExtIcon, FlagIcon, InboxIcon, MailIcon, UserPlusIcon } from './icons'
 import { ease } from './neu'
 
 const container = 'mx-auto w-full max-w-[1200px] px-5 sm:px-8'
+// A row that fills the screen under the sticky bar and is a soft scroll-snap target.
+const ROW = 'snap-row flex min-h-[calc(100svh-4.75rem)] flex-col'
 const BASECAMP = 'https://basecamp.ridgevia.co'
 const MAIL = 'mailto:ridgeviallc@gmail.com?subject=RidgeVia%20Health'
 
@@ -31,13 +35,41 @@ function Rise({ className = '', children }) {
   )
 }
 
+// Everything below the first screen fades and rises in as it enters and fades out as it leaves, tied to the
+// scroll position (the .reveal rules in index.css, run by the compositor). Browsers without scroll-driven
+// animations get a one-time fade-in as each block arrives instead, and reduced-motion visitors get neither.
+function useRevealFallback() {
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
+    if (CSS.supports('animation-timeline: view()')) return undefined
+    const blocks = [...document.querySelectorAll('.reveal')]
+    const watch = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          entry.target.classList.add('is-in')
+          watch.unobserve(entry.target)
+        })
+      },
+      { rootMargin: '0px 0px -8% 0px' },
+    )
+    blocks.forEach((el) => {
+      el.classList.add('reveal-js')
+      watch.observe(el)
+    })
+    return () => watch.disconnect()
+  }, [])
+}
+
 const Groove = ({ className = '' }) => <div aria-hidden="true" className={`rounded-full shadow-groove ${className}`} />
 
 const facts = [
   { name: 'Triage', icon: <InboxIcon size={24} />, text: 'Reads every message, ranks urgency, extracts the key facts, and pages the right teammate.' },
-  { name: 'Patients', icon: <UsersIcon size={24} />, text: 'Knows every patient. Ask a question and get an answer from the full record.' },
-  { name: 'Analytics', icon: <ChartIcon size={24} />, text: 'Ask about your practice in plain English and get answers from your own data.' },
-  { name: 'Growth', icon: <TrendIcon size={24} />, text: 'See what is driving growth and what it takes to scale.' },
+  {
+    name: 'Knows your practice',
+    icon: <BrainIcon size={24} />,
+    text: 'Every patient, message, and number feeds one system that knows how your practice runs. Ask it anything, from one chart to what drives growth. It works like a second you.',
+  },
   { name: 'Onboarding', icon: <UserPlusIcon size={24} />, text: 'Gets new patients and new staff up to speed faster.' },
   {
     name: 'Safety',
@@ -53,6 +85,7 @@ const principles = [
 ]
 
 export default function App() {
+  useRevealFallback()
   return (
     <>
       <Backdrop />
@@ -80,81 +113,88 @@ export default function App() {
       </header>
 
       <main id="main">
-        <section>
-          <div className={`${container} flex flex-col gap-14 py-10 lg:py-14`}>
-            <motion.div variants={stagger} initial="hidden" animate="show">
-              <motion.h1
-                variants={item}
-                className="max-w-[15ch] font-display text-[48px] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance sm:text-[68px] lg:text-[92px]"
-              >
-                Simply scale your practice.
-              </motion.h1>
-            </motion.div>
-            <Console />
-          </div>
+        {/* Every part of the page is a row that fills the screen under the sticky bar (about 4.75rem). The page
+            softly snaps to each row as you scroll (index.css), a nudge toward one row at a time. */}
+        <section className={`${container} ${ROW} py-10 lg:py-14`}>
+          <motion.div variants={stagger} initial="hidden" animate="show">
+            <motion.h1
+              variants={item}
+              className="max-w-[15ch] font-display text-[48px] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance sm:text-[68px] lg:text-[92px]"
+            >
+              Simply scale your practice.
+            </motion.h1>
+          </motion.div>
         </section>
 
-        <section id="base-camp" className={`${container} grid gap-12 py-20 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-20`}>
-          <div>
-            <h2 className="font-display text-[48px] leading-none font-extrabold tracking-[-0.04em] sm:text-[60px]">Base Camp</h2>
-            <p className="mt-6 max-w-[44ch] text-[19px] leading-relaxed text-muted-foreground">
-              The autonomous agent for small and medium practices. Better outcomes, with far less data work.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-              <NeuButton as="a" href={BASECAMP} tone="primary">
-                Open Base Camp <ExtIcon />
-              </NeuButton>
-              <a href={`${BASECAMP}/features`} className="font-bold text-link underline underline-offset-4">
-                Features
-              </a>
-              <a href={`${BASECAMP}/pricing`} className="font-bold text-link underline underline-offset-4">
-                Pricing
-              </a>
-            </div>
-          </div>
-          <dl className="flex flex-col gap-7">
-            {facts.map((f, i) => (
-              <div key={f.name} className="flex flex-col gap-7">
-                {i > 0 && <Groove className="h-[3px] w-full" />}
-                <div className="flex gap-5">
-                  <span className="grid size-14 shrink-0 place-items-center rounded-full text-link shadow-raised-sm">{f.icon}</span>
-                  <div>
-                    <dt className="font-display text-[24px] leading-tight font-bold tracking-[-0.02em]">{f.name}</dt>
-                    <dd className="mt-1.5 text-[17px] leading-relaxed text-muted-foreground">{f.text}</dd>
-                  </div>
+        <section className={`${container} ${ROW} py-5 sm:py-6`}>
+          <dl className="grid flex-1 auto-rows-fr gap-4 sm:grid-cols-2 sm:gap-5">
+            {facts.map((f) => (
+              <div key={f.name} className="reveal flex flex-col justify-center gap-5 rounded-[32px] p-6 shadow-raised sm:p-8">
+                <span className="grid size-12 shrink-0 place-items-center rounded-full text-link shadow-raised-sm">{f.icon}</span>
+                <div>
+                  <dt className="font-display text-[24px] leading-tight font-bold tracking-[-0.02em] sm:text-[26px] lg:text-[28px]">{f.name}</dt>
+                  <dd className="mt-2 text-[16px] leading-relaxed text-muted-foreground lg:text-[17px]">{f.text}</dd>
                 </div>
               </div>
             ))}
           </dl>
         </section>
 
-        <section className={`${container} py-16`}>
-          <h2 className="max-w-[20ch] font-display text-[38px] leading-[1.06] font-extrabold tracking-[-0.03em] text-balance sm:text-[48px]">
-            Better outcomes, less data work.
+        <section id="base-camp" className={`${container} ${ROW} justify-center py-12`}>
+          <h2 className="reveal basecamp-wordmark text-[clamp(40px,13vw,52px)] leading-[1.05] sm:text-[84px] md:text-[104px] lg:text-[136px]">
+            {/* The campfire is exactly as tall as the capital letters (0.7em in this cut) and sits on the baseline, so its top and bottom line up with the letters. */}
+            <img src={campfire} alt="" aria-hidden="true" className="mr-[0.2em] inline-block h-[0.7em] w-auto align-baseline" />
+            Base Camp
           </h2>
-          <Rise className="mt-12 flex flex-col gap-8 rounded-[32px] p-7 md:flex-row md:gap-10 md:p-10">
-            {principles.map((p, i) => (
-              <div key={p.name} className="contents">
-                {i > 0 && <Groove className="h-[3px] w-full md:h-auto md:w-[3px] md:self-stretch" />}
-                <div className="flex-1">
-                  <h3 className="font-display text-[24px] leading-tight font-bold tracking-[-0.02em]">{p.name}</h3>
-                  <p className="mt-2 text-[17px] leading-relaxed text-muted-foreground">{p.text}</p>
-                </div>
-              </div>
-            ))}
-          </Rise>
+          <p className="reveal mt-8 max-w-[34ch] text-[22px] leading-relaxed text-muted-foreground sm:text-[26px]" style={{ '--in-s': '8%', '--in-e': '98%' }}>
+            The autonomous agent for small and medium practices. Better outcomes, with far less data work.
+          </p>
+          <div className="reveal mt-10 flex flex-wrap items-center gap-x-8 gap-y-4" style={{ '--in-s': '16%', '--in-e': '100%' }}>
+            <NeuButton as="a" href={BASECAMP} tone="primary" size="lg">
+              Open Base Camp <ExtIcon />
+            </NeuButton>
+            <a href={`${BASECAMP}/features`} className="text-[19px] font-bold text-link underline underline-offset-4">
+              Features
+            </a>
+            <a href={`${BASECAMP}/pricing`} className="text-[19px] font-bold text-link underline underline-offset-4">
+              Pricing
+            </a>
+          </div>
         </section>
 
-        <section id="contact" className={`${container} py-20`}>
-          <div className="flex flex-col items-start justify-between gap-8 rounded-[36px] p-8 shadow-well md:flex-row md:items-center md:p-12">
-            <div>
-              <h2 className="max-w-[18ch] font-display text-[34px] leading-[1.08] font-extrabold tracking-[-0.03em] text-balance sm:text-[44px]">
-                Practices, investors, and collaborators.
-              </h2>
-              <p className="mt-4 max-w-[46ch] text-[19px] leading-relaxed text-muted-foreground">
-                Run a practice, invest in this space, or build for it? Let&apos;s talk.
-              </p>
-            </div>
+        <section id="demo" className={`${container} ${ROW} justify-center py-4`}>
+          <div className="reveal" style={{ '--in-e': '25%', '--out-s': '75%' }}>
+            <Console />
+          </div>
+        </section>
+
+        <section className={`${container} ${ROW} justify-center gap-10 py-12`}>
+          <h2 className="reveal max-w-[20ch] font-display text-[34px] leading-[1.05] font-extrabold tracking-[-0.03em] text-balance sm:text-[44px] lg:text-[56px]">
+            Better outcomes, less data work.
+          </h2>
+          <div className="reveal" style={{ '--in-e': '45%', '--out-s': '55%' }}>
+            <Rise className="flex flex-col gap-8 rounded-[36px] p-7 sm:p-9 md:min-h-[34svh] md:flex-row md:gap-10 md:p-10">
+              {principles.map((p, i) => (
+                <div key={p.name} className="contents">
+                  {i > 0 && <Groove className="h-[3px] w-full md:h-auto md:w-[3px] md:self-stretch" />}
+                  <div className="flex-1">
+                    <h3 className="font-display text-[22px] leading-tight font-bold tracking-[-0.02em] sm:text-[24px]">{p.name}</h3>
+                    <p className="mt-2 text-[16px] leading-relaxed text-muted-foreground lg:text-[17px]">{p.text}</p>
+                  </div>
+                </div>
+              ))}
+            </Rise>
+          </div>
+        </section>
+
+        <section id="contact" className={`${container} ${ROW} py-8`}>
+          <div className="reveal flex flex-1 flex-col items-start justify-center gap-8 rounded-[40px] p-7 shadow-well sm:p-12 lg:p-14">
+            <h2 className="max-w-[20ch] font-display text-[32px] leading-[1.06] font-extrabold tracking-[-0.03em] text-balance sm:text-[44px] lg:text-[56px]">
+              Practices, investors, and collaborators.
+            </h2>
+            <p className="max-w-[44ch] text-[18px] leading-relaxed text-muted-foreground sm:text-[20px]">
+              Run a practice, invest in this space, or build for it? Let&apos;s talk.
+            </p>
             <NeuButton as="a" href={MAIL} tone="primary" size="lg" className="shrink-0">
               <MailIcon size={22} />
               Email RidgeVia Health
@@ -163,7 +203,7 @@ export default function App() {
         </section>
       </main>
 
-      <footer className={`${container} flex flex-col gap-4 pt-4 pb-12 text-[15px] text-muted-foreground`}>
+      <footer className={`${container} snap-end-row flex flex-col gap-4 pt-4 pb-12 text-[15px] text-muted-foreground`}>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Wordmark className="text-[20px]" />
           <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-7 gap-y-2 font-semibold">

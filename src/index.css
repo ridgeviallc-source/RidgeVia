@@ -71,6 +71,23 @@
    body rule (off-white ground, 14px system font), and unlayered beats @layer base. */
 html {
   scroll-behavior: smooth;
+  /* Soft snap: near a row's top the page settles onto it, a nudge toward one row at a time. "proximity", not
+     "mandatory", so it never fights the scroll or traps anyone between rows. The padding is the sticky bar. */
+  scroll-snap-type: y proximity;
+  scroll-padding-top: 4.75rem;
+}
+.snap-row {
+  scroll-snap-align: start;
+}
+/* The footer is a snap point too, by its bottom edge. Without it the last row's top is the only stop near the
+   end, and the page settles back onto that row instead of letting you reach the footer. */
+.snap-end-row {
+  scroll-snap-align: end;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-snap-type: none;
+  }
 }
 body {
   margin: 0;
@@ -80,6 +97,62 @@ body {
   font-size: 17px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Large "Base Camp": the Base Camp wordmark exactly as the app's own nav sets it (Fraunces 600, tight
+   tracking, the optical size the browser picks at nav size, pinned so a huge heading keeps the same cut
+   instead of switching to the thinner display cut). The color is the stone ring of the campfire logo, sampled
+   from the logo file, with a gentle light-to-dark shade. The lightest stop keeps 4:1 against every background wash. */
+.basecamp-wordmark {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  font-optical-sizing: none;
+  font-variation-settings: 'opsz' 21;
+  color: #385038;
+  background-image: linear-gradient(180deg, #4a5e4a 0%, #385038 50%, #2b4230 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Scroll reveal for everything below the first screen. Each .reveal block fades and rises in as it enters the
+   viewport and fades out (drifting up) as it leaves, tied to the scroll position with view() timelines, so it
+   runs on the compositor with no script. --in-s and --in-e set where in the entry the fade-in starts and ends,
+   --out-s where in the exit the fade-out starts; tall blocks use shorter ranges. Where view() is unsupported
+   the content simply shows (App.jsx adds a one-time fade-in there), and reduced motion gets neither. */
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 36px, 0);
+  }
+}
+@keyframes reveal-out {
+  to {
+    opacity: 0;
+    transform: translate3d(0, -28px, 0);
+  }
+}
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-in linear backwards, reveal-out linear forwards;
+    animation-timeline: view(), view();
+    animation-range: entry var(--in-s, 0%) entry var(--in-e, 90%), exit var(--out-s, 10%) exit 100%;
+  }
+}
+.reveal-js {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-js.is-in {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+  }
 }
 
 /* Backdrop layers (Backdrop.jsx). All motion is transform and opacity, so the compositor runs it and the
