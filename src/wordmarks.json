@@ -1,0 +1,25 @@
+{
+  "items": [
+    {
+      "id": "urbanist-lexend",
+      "name": "Modernist and light",
+      "note": "Urbanist and Lexend stand in for SK Modernist and Nexa Pro, which are commercial fonts. Heavy RidgeVia, feather-light Health.",
+      "gap": "0.28em",
+      "ridge": {
+        "family": "Urbanist",
+        "fallback": "ui-sans-serif, system-ui, sans-serif",
+        "weight": 800,
+        "tracking": "-0.03em",
+        "scale": 1.05
+      },
+      "health": {
+        "family": "Lexend",
+        "fallback": "ui-sans-serif, system-ui, sans-serif",
+        "weight": 300,
+        "style": "normal",
+        "tracking": "0",
+        "scale": 0.9
+      }
+    }
+  ]
+}

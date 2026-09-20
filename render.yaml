@@ -1,12 +1,12 @@
-# Render blueprint for the RidgeVia Health landing page.
-# One static site, no build step. Connect the repo in the Render dashboard and it
-# picks this file up. Attach ridgevia.co under the service's Custom Domains tab.
+# Render blueprint for the RidgeVia Health site: a Vite build published as a static site.
+# The live service is named "RidgeVia" and deploys the main branch of ridgeviallc-source/RidgeVia.
+# Its build settings must match this file: the build command below, and dist as the publish path.
 services:
   - type: web
-    name: ridgevia-site
+    name: RidgeVia
     runtime: static
-    buildCommand: "echo 'static site, no build step'"
-    staticPublishPath: .
+    buildCommand: npm ci --ignore-scripts && npm run build
+    staticPublishPath: dist
     pullRequestPreviewsEnabled: true
     headers:
       - path: /*
@@ -15,6 +15,9 @@ services:
       - path: /*
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
+      - path: /static/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
       - path: /assets/*
         name: Cache-Control
         value: public, max-age=604800
