@@ -104,7 +104,7 @@ export default function App() {
           </div>
         </section>
 
-        <section id="base-camp" className={`${container} flex min-h-[82svh] flex-col justify-center py-20`}>
+        <section id="base-camp" className={`${container} flex min-h-svh flex-col justify-center py-20`}>
           <h2 className="font-display text-[64px] leading-none font-extrabold tracking-[-0.045em] sm:text-[104px] lg:text-[140px]">Base Camp</h2>
           <p className="mt-8 max-w-[34ch] text-[22px] leading-relaxed text-muted-foreground sm:text-[26px]">
             The autonomous agent for small and medium practices. Better outcomes, with far less data work.
