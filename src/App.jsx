@@ -2,7 +2,7 @@ import { motion } from 'motion/react'
 import Backdrop from './Backdrop'
 import Console from './Console'
 import NeuButton from './NeuButton'
-import Wordmark, { Mark } from './Wordmark'
+import Wordmark from './Wordmark'
 import { useDesign } from './design'
 import { ChartIcon, ExtIcon, FlagIcon, InboxIcon, MailIcon, TrendIcon, UserPlusIcon, UsersIcon } from './icons'
 import { ease } from './neu'
@@ -63,17 +63,16 @@ export default function App() {
         Skip to content
       </a>
 
-      <header className="relative z-10">
-        <div className={`${container} flex flex-wrap items-center justify-between gap-4 py-6`}>
-          <a href="https://ridgevia.co" aria-label="RidgeVia Health home" className="flex items-center gap-3">
-            <Mark size={40} disc={false} />
+      <header className="nav-bar sticky top-0 z-40">
+        <div className={`${container} flex items-center justify-between gap-3 py-3`}>
+          <a href="https://ridgevia.co" aria-label="RidgeVia Health home" className="flex items-center">
             <Wordmark className="text-[19px] sm:text-[24px]" />
           </a>
           <nav aria-label="Primary" className="flex items-center gap-1 rounded-full p-1.5 text-[15px] font-semibold shadow-well">
             <a href={BASECAMP} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-primary-foreground shadow-raised-sm hover:brightness-125">
               Base Camp <ExtIcon />
             </a>
-            <a href={MAIL} className="rounded-full px-4 py-2 text-muted-foreground hover:text-foreground">
+            <a href={MAIL} className="rounded-full px-4 py-2 text-foreground hover:underline">
               Contact
             </a>
           </nav>

@@ -128,7 +128,7 @@ export default function TriagePane() {
               <div>
                 <h3 className="font-display text-[17px] font-bold">Draft reply</h3>
                 <div className="mt-2 rounded-2xl p-4 text-[16px] leading-relaxed shadow-raised-sm">{m.draft}</div>
-                <h3 className="mt-5 font-display text-[17px] font-bold">Chart note draft</h3>
+                <h3 className="mt-5 font-display text-[17px] font-bold">Chart Update</h3>
                 <p className="mt-1.5 text-[15px] leading-relaxed text-muted-foreground">{m.note}</p>
 
                 <div className="mt-6 flex flex-wrap items-center gap-4">
