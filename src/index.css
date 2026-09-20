@@ -99,6 +99,45 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+/* Scroll reveal for everything below the first screen. Each .reveal block fades and rises in as it enters the
+   viewport and fades out (drifting up) as it leaves, tied to the scroll position with view() timelines, so it
+   runs on the compositor with no script. --in-s and --in-e set where in the entry the fade-in starts and ends,
+   --out-s where in the exit the fade-out starts; tall blocks use shorter ranges. Where view() is unsupported
+   the content simply shows (App.jsx adds a one-time fade-in there), and reduced motion gets neither. */
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 36px, 0);
+  }
+}
+@keyframes reveal-out {
+  to {
+    opacity: 0;
+    transform: translate3d(0, -28px, 0);
+  }
+}
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-in linear backwards, reveal-out linear forwards;
+    animation-timeline: view(), view();
+    animation-range: entry var(--in-s, 0%) entry var(--in-e, 90%), exit var(--out-s, 10%) exit 100%;
+  }
+}
+.reveal-js {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-js.is-in {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+  }
+}
+
 /* Backdrop layers (Backdrop.jsx). All motion is transform and opacity, so the compositor runs it and the
    main thread stays free for scrolling. --flow is 0 at the top of the page and 1 at the bottom. */
 .bd {

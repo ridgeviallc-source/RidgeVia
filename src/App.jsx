@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { motion } from 'motion/react'
 import Backdrop from './Backdrop'
 import Console from './Console'
@@ -32,6 +33,32 @@ function Rise({ className = '', children }) {
   )
 }
 
+// Everything below the first screen fades and rises in as it enters and fades out as it leaves, tied to the
+// scroll position (the .reveal rules in index.css, run by the compositor). Browsers without scroll-driven
+// animations get a one-time fade-in as each block arrives instead, and reduced-motion visitors get neither.
+function useRevealFallback() {
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
+    if (CSS.supports('animation-timeline: view()')) return undefined
+    const blocks = [...document.querySelectorAll('.reveal')]
+    const watch = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          entry.target.classList.add('is-in')
+          watch.unobserve(entry.target)
+        })
+      },
+      { rootMargin: '0px 0px -8% 0px' },
+    )
+    blocks.forEach((el) => {
+      el.classList.add('reveal-js')
+      watch.observe(el)
+    })
+    return () => watch.disconnect()
+  }, [])
+}
+
 const Groove = ({ className = '' }) => <div aria-hidden="true" className={`rounded-full shadow-groove ${className}`} />
 
 const facts = [
@@ -56,6 +83,7 @@ const principles = [
 ]
 
 export default function App() {
+  useRevealFallback()
   return (
     <>
       <Backdrop />
@@ -98,7 +126,7 @@ export default function App() {
           <div className={`${container} pt-12 pb-4`}>
             <dl className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:gap-6">
               {facts.map((f) => (
-                <div key={f.name} className="flex flex-col gap-4 rounded-[28px] p-5 shadow-raised sm:p-6">
+                <div key={f.name} className="reveal flex flex-col gap-4 rounded-[28px] p-5 shadow-raised sm:p-6">
                   <span className="grid size-12 shrink-0 place-items-center rounded-full text-link shadow-raised-sm">{f.icon}</span>
                   <div>
                     <dt className="font-display text-[22px] leading-tight font-bold tracking-[-0.02em]">{f.name}</dt>
@@ -111,15 +139,15 @@ export default function App() {
         </section>
 
         <section id="base-camp" className={`${container} flex min-h-svh flex-col justify-center py-20`}>
-          <h2 className="basecamp-wordmark text-[clamp(40px,13vw,52px)] leading-[1.05] sm:text-[84px] md:text-[104px] lg:text-[136px]">
+          <h2 className="reveal basecamp-wordmark text-[clamp(40px,13vw,52px)] leading-[1.05] sm:text-[84px] md:text-[104px] lg:text-[136px]">
             {/* The campfire is exactly as tall as the capital letters (0.7em in this cut) and sits on the baseline, so its top and bottom line up with the letters. */}
             <img src={campfire} alt="" aria-hidden="true" className="mr-[0.2em] inline-block h-[0.7em] w-auto align-baseline" />
             Base Camp
           </h2>
-          <p className="mt-8 max-w-[34ch] text-[22px] leading-relaxed text-muted-foreground sm:text-[26px]">
+          <p className="reveal mt-8 max-w-[34ch] text-[22px] leading-relaxed text-muted-foreground sm:text-[26px]" style={{ '--in-s': '8%', '--in-e': '98%' }}>
             The autonomous agent for small and medium practices. Better outcomes, with far less data work.
           </p>
-          <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
+          <div className="reveal mt-10 flex flex-wrap items-center gap-x-8 gap-y-4" style={{ '--in-s': '16%', '--in-e': '100%' }}>
             <NeuButton as="a" href={BASECAMP} tone="primary" size="lg">
               Open Base Camp <ExtIcon />
             </NeuButton>
@@ -132,15 +160,16 @@ export default function App() {
           </div>
         </section>
 
-        <section id="demo" className={`${container} pb-10`}>
+        <section id="demo" className={`${container} reveal pb-10`} style={{ '--in-e': '25%', '--out-s': '75%' }}>
           <Console />
         </section>
 
         <section className={`${container} py-16`}>
-          <h2 className="max-w-[20ch] font-display text-[38px] leading-[1.06] font-extrabold tracking-[-0.03em] text-balance sm:text-[48px]">
+          <h2 className="reveal max-w-[20ch] font-display text-[38px] leading-[1.06] font-extrabold tracking-[-0.03em] text-balance sm:text-[48px]">
             Better outcomes, less data work.
           </h2>
-          <Rise className="mt-12 flex flex-col gap-8 rounded-[32px] p-7 md:flex-row md:gap-10 md:p-10">
+          <div className="reveal mt-12" style={{ '--in-e': '45%', '--out-s': '55%' }}>
+            <Rise className="flex flex-col gap-8 rounded-[32px] p-7 md:flex-row md:gap-10 md:p-10">
             {principles.map((p, i) => (
               <div key={p.name} className="contents">
                 {i > 0 && <Groove className="h-[3px] w-full md:h-auto md:w-[3px] md:self-stretch" />}
@@ -151,10 +180,11 @@ export default function App() {
               </div>
             ))}
           </Rise>
+          </div>
         </section>
 
         <section id="contact" className={`${container} py-20`}>
-          <div className="flex flex-col items-start justify-between gap-8 rounded-[36px] p-8 shadow-well md:flex-row md:items-center md:p-12">
+          <div className="reveal flex flex-col items-start justify-between gap-8 rounded-[36px] p-8 shadow-well md:flex-row md:items-center md:p-12">
             <div>
               <h2 className="max-w-[18ch] font-display text-[34px] leading-[1.08] font-extrabold tracking-[-0.03em] text-balance sm:text-[44px]">
                 Practices, investors, and collaborators.
