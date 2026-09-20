@@ -106,7 +106,7 @@ export default function Console() {
       initial={{ y: 26, boxShadow: neu.flat }}
       animate={{ y: 0, boxShadow: neu.raised }}
       transition={{ duration: 1, ease, delay: 0.35 }}
-      className="rounded-[32px] p-4 sm:p-6"
+      className="rounded-[32px] p-3 sm:p-6"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Tabs value={tab} onChange={setTab} />

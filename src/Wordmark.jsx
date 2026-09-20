@@ -89,7 +89,7 @@ function Health({ style }) {
     }
   }, [reduced])
   return (
-    <span ref={ref} className="health-gloss" style={style}>
+    <span ref={ref} className="health-gloss" data-text="Health" style={style}>
       Health
     </span>
   )

@@ -82,12 +82,137 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Backdrop layers (Backdrop.jsx). All motion is transform and opacity, so the compositor runs it and the
+   main thread stays free for scrolling. --flow is 0 at the top of the page and 1 at the bottom. */
+.bd {
+  --flow: 0;
+  animation: bd-in 0.9s ease both;
+}
+.bd-parallax {
+  will-change: transform;
+  transform: translate3d(0, calc(var(--flow) * -120px), 0);
+}
+.bd-turn {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  /* Big enough to cover the backdrop from every angle, and no bigger: the size is memory on a phone. */
+  width: 160vmax;
+  height: 160vmax;
+  margin: -80vmax 0 0 -80vmax;
+  will-change: transform;
+  transform: rotate(calc(var(--flow) * 300deg));
+}
+.bd-wheel {
+  width: 100%;
+  height: 100%;
+  opacity: 0.6;
+  background: conic-gradient(from 20deg, var(--wash-1), var(--wash-2), var(--wash-3), var(--wash-1));
+  animation: bd-spin 150s linear infinite;
+}
+.bd-ribbon,
+.bd-blob,
+.bd-shimmer,
+.bd-mix {
+  position: absolute;
+  border-radius: 50%;
+}
+.bd-ribbon {
+  animation: bd-ribbon var(--dur) ease-in-out infinite;
+}
+.bd-blob {
+  opacity: 0.85;
+  animation: bd-drift var(--dur) ease-in-out infinite;
+}
+.bd-shimmer {
+  opacity: var(--o0);
+  animation: bd-shimmer var(--dur) ease-in-out infinite;
+}
+/* The band: three washes in a row, three screens wide, drawn once and slid sideways by the scroll. */
+.bd-veil {
+  position: absolute;
+  left: 0;
+  top: -20%;
+  width: 320vw;
+  height: 140%;
+  opacity: 0.62;
+  background: linear-gradient(100deg, var(--wash-2) 0%, var(--wash-3) 25%, var(--wash-1) 50%, var(--wash-2) 75%, var(--wash-3) 100%);
+  will-change: transform;
+  transform: translate3d(calc(var(--flow) * -170vw), 0, 0);
+}
+/* Opacity runs through the layer's top, middle and bottom values (--a, --b, --c) as the page scrolls. */
+.bd-mix {
+  will-change: transform, opacity;
+  opacity: calc(var(--a) + (var(--b) - var(--a)) * min(var(--flow), 0.5) * 2 + (var(--c) - var(--b)) * max(var(--flow) - 0.5, 0) * 2);
+  transform: translate3d(calc(var(--flow) * var(--slide) * 1vw), 0, 0);
+}
+@keyframes bd-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes bd-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes bd-ribbon {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(var(--r0));
+  }
+  50% {
+    transform: translate3d(var(--x1), 0, 0) rotate(var(--r1));
+  }
+}
+@keyframes bd-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33.3% {
+    transform: translate3d(var(--dx1), var(--dy1), 0) scale(var(--s1));
+  }
+  66.6% {
+    transform: translate3d(var(--dx2), var(--dy2), 0) scale(var(--s2));
+  }
+}
+@keyframes bd-shimmer {
+  0%,
+  100% {
+    opacity: var(--o0);
+    transform: translate3d(0, 0, 0);
+  }
+  33.3% {
+    opacity: var(--o1);
+  }
+  50% {
+    transform: translate3d(40px, -30px, 0);
+  }
+  66.6% {
+    opacity: var(--o2);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bd,
+  .bd-wheel,
+  .bd-ribbon,
+  .bd-blob,
+  .bd-shimmer {
+    animation: none;
+  }
+}
+
 /* First-paint backdrop. The animated backdrop is drawn by script, so without this the page would
    open flat gray and the color would fade in. This static version of the same three washes paints
    with the CSS, and Backdrop.jsx crossfades it into the animated one and then removes it. */
 #boot-backdrop {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  height: 100lvh; /* the large viewport: also covers the area under a mobile browser's toolbar */
   z-index: -10;
   pointer-events: none;
   opacity: 0.55;
@@ -104,8 +229,8 @@ body {
    with the full-strength link colors keeps the nav text legible even over a dark headline passing beneath. */
 .nav-bar {
   background: rgba(255, 255, 255, 0.3);
-  -webkit-backdrop-filter: blur(28px) saturate(1.9);
-  backdrop-filter: blur(28px) saturate(1.9);
+  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+  backdrop-filter: blur(14px) saturate(1.5);
   box-shadow:
     inset 0 1px 0 var(--lit-a),
     inset 0 -2px 4px var(--shade-c),
@@ -145,8 +270,19 @@ html[data-bg="grain"] body::before {
    left edge, 1 the right edge) on its own random schedule. At rest the band sits off the left edge. */
 .health-gloss {
   --sheen: -1;
+  position: relative;
   padding: 0.1em 0.06em;
   margin: -0.1em -0.06em;
+  /* The word itself carries the static shadow and highlight. Only the overlay below repaints as the band moves,
+     and it has no filter, so a sweep costs a small gradient repaint instead of a filter re-run per frame. */
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7), 0 2px 3px rgba(4, 63, 46, 0.28);
+}
+.health-gloss::after {
+  content: attr(data-text);
+  content: attr(data-text) / "";
+  position: absolute;
+  inset: 0;
+  padding: inherit;
   background-image:
     linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.9) 50%, transparent 58%),
     linear-gradient(180deg, #087f5b 0%, #06664a 52%, #043f2e 100%);
@@ -157,7 +293,7 @@ html[data-bg="grain"] body::before {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.7)) drop-shadow(0 2px 3px rgba(4, 63, 46, 0.28));
+  text-shadow: none;
 }
 
 /* The clinOS panel scrolls on its own: a thin themed scrollbar, and edges that fade so the cut-off reads as "more". */
