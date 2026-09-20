@@ -258,7 +258,6 @@ export default function ClinOS() {
           <GrowthScene />
         </div>
       </div>
-      <p className="mt-3 text-sm text-muted-foreground">Illustrative conversations. Names, files and numbers are made up.</p>
     </div>
   )
 }

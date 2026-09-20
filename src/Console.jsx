@@ -110,7 +110,7 @@ export default function Console() {
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Tabs value={tab} onChange={setTab} />
-        <span className="rounded-full px-3.5 py-1.5 text-sm text-muted-foreground shadow-well">Sample data</span>
+        <span className="rounded-full px-3.5 py-1.5 text-sm text-muted-foreground shadow-well">Sample UI and data</span>
       </div>
       <p className="mt-3 text-[15px] font-semibold text-muted-foreground">{INTRO[tab]}</p>
 
@@ -123,6 +123,10 @@ export default function Console() {
           </motion.div>
         </AnimatePresence>
       </div>
+
+      <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+        <span className="font-semibold text-foreground">Sample interface.</span> The Base Camp platform has a different theme. Conversations, names, files and numbers are made up.
+      </p>
     </motion.section>
   )
 }
