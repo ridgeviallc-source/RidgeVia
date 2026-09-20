@@ -88,7 +88,7 @@ export default function App() {
                 variants={item}
                 className="max-w-[15ch] font-display text-[48px] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance sm:text-[68px] lg:text-[92px]"
               >
-                Simple scaling for your practice.
+                Simply scale your practice.
               </motion.h1>
             </motion.div>
             <Console />
