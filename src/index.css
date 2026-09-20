@@ -82,47 +82,21 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Large "Base Camp": the deep green of river stones, with a gentle light-to-dark shade so it reads as a stone
-   and not a flat fill. Lightest stop keeps 3.6:1 against every background wash, the middle 4.4:1. */
-.rock-green {
-  color: #2f5f48;
-  background-image: linear-gradient(180deg, #3a6c54 0%, #2f5f48 50%, #234a38 100%);
+/* Large "Base Camp": the Base Camp wordmark exactly as the app's own nav sets it (Fraunces 600, tight
+   tracking, the optical size the browser picks at nav size, pinned so a huge heading keeps the same cut
+   instead of switching to the thinner display cut). The color is the stone ring of the campfire logo, sampled
+   from the logo file, with a gentle light-to-dark shade. The lightest stop keeps 4:1 against every background wash. */
+.basecamp-wordmark {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  font-optical-sizing: none;
+  font-variation-settings: 'opsz' 21;
+  color: #385038;
+  background-image: linear-gradient(180deg, #4a5e4a 0%, #385038 50%, #2b4230 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-}
-
-/* "Simply" in the headline: the lavender of the background, deepened and fully filled in, with a soft gloss.
-   Same twin-layer build as the Health wordmark: the word carries the shadow and highlight, and a clipped gradient
-   overlay carries the fill, so nothing repaints and no filter runs. The lightest point (the gloss at the top edge)
-   keeps 3.4:1 against every background wash, and the body of the letters 5:1 or better. */
-.simply-gloss {
-  position: relative;
-  display: inline-block;
-  /* The Health wordmark's face and size (Caveat 700 at 1.4x), with the line height pulled in so the taller
-     script does not push the two headline lines apart. */
-  font-family: 'Caveat', cursive;
-  font-weight: 700;
-  letter-spacing: 0;
-  font-size: 1.4em;
-  line-height: 0.72;
-  margin-right: 0.1em;
-  color: #4b2fb8;
-  text-shadow: 0 0.02em 0 rgba(255, 255, 255, 0.6), 0 0.06em 0.14em rgba(62, 38, 160, 0.28);
-}
-.simply-gloss::after {
-  content: attr(data-text);
-  content: attr(data-text) / "";
-  position: absolute;
-  inset: 0;
-  white-space: nowrap;
-  background-image:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 46%),
-    linear-gradient(180deg, #5637c9 0%, #4b2fb8 52%, #3e26a0 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: none;
 }
 
 /* Backdrop layers (Backdrop.jsx). All motion is transform and opacity, so the compositor runs it and the

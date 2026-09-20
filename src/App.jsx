@@ -89,10 +89,7 @@ export default function App() {
                 variants={item}
                 className="max-w-[15ch] font-display text-[48px] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance sm:text-[68px] lg:text-[92px]"
               >
-                <span className="simply-gloss" data-text="Simply">
-                  Simply
-                </span>{' '}
-                scale your practice.
+                Simply scale your practice.
               </motion.h1>
             </motion.div>
             <dl className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:gap-6">
@@ -110,7 +107,7 @@ export default function App() {
         </section>
 
         <section id="base-camp" className={`${container} flex min-h-svh flex-col justify-center py-20`}>
-          <h2 className="rock-green font-display text-[64px] leading-none font-extrabold tracking-[-0.045em] sm:text-[104px] lg:text-[140px]">Base Camp</h2>
+          <h2 className="basecamp-wordmark text-[64px] leading-[1.05] sm:text-[104px] lg:text-[136px]">Base Camp</h2>
           <p className="mt-8 max-w-[34ch] text-[22px] leading-relaxed text-muted-foreground sm:text-[26px]">
             The autonomous agent for small and medium practices. Better outcomes, with far less data work.
           </p>
