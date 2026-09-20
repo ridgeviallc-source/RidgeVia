@@ -81,7 +81,7 @@ export default function App() {
 
       <main id="main">
         <section>
-          <div className={`${container} flex flex-col gap-14 py-10 lg:py-14`}>
+          <div className={`${container} flex flex-col gap-12 py-10 lg:gap-14 lg:py-14`}>
             <motion.div variants={stagger} initial="hidden" animate="show">
               <motion.h1
                 variants={item}
@@ -90,42 +90,40 @@ export default function App() {
                 Simply scale your practice.
               </motion.h1>
             </motion.div>
-            <Console />
+            <dl className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+              {facts.map((f) => (
+                <div key={f.name} className="flex flex-col gap-4 rounded-[28px] p-5 shadow-raised sm:p-6">
+                  <span className="grid size-12 shrink-0 place-items-center rounded-full text-link shadow-raised-sm">{f.icon}</span>
+                  <div>
+                    <dt className="font-display text-[22px] leading-tight font-bold tracking-[-0.02em]">{f.name}</dt>
+                    <dd className="mt-1.5 text-[16px] leading-relaxed text-muted-foreground">{f.text}</dd>
+                  </div>
+                </div>
+              ))}
+            </dl>
           </div>
         </section>
 
-        <section id="base-camp" className={`${container} grid gap-12 py-20 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-20`}>
-          <div>
-            <h2 className="font-display text-[48px] leading-none font-extrabold tracking-[-0.04em] sm:text-[60px]">Base Camp</h2>
-            <p className="mt-6 max-w-[44ch] text-[19px] leading-relaxed text-muted-foreground">
-              The autonomous agent for small and medium practices. Better outcomes, with far less data work.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-              <NeuButton as="a" href={BASECAMP} tone="primary">
-                Open Base Camp <ExtIcon />
-              </NeuButton>
-              <a href={`${BASECAMP}/features`} className="font-bold text-link underline underline-offset-4">
-                Features
-              </a>
-              <a href={`${BASECAMP}/pricing`} className="font-bold text-link underline underline-offset-4">
-                Pricing
-              </a>
-            </div>
+        <section id="base-camp" className={`${container} flex min-h-[82svh] flex-col justify-center py-20`}>
+          <h2 className="font-display text-[64px] leading-none font-extrabold tracking-[-0.045em] sm:text-[104px] lg:text-[140px]">Base Camp</h2>
+          <p className="mt-8 max-w-[34ch] text-[22px] leading-relaxed text-muted-foreground sm:text-[26px]">
+            The autonomous agent for small and medium practices. Better outcomes, with far less data work.
+          </p>
+          <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
+            <NeuButton as="a" href={BASECAMP} tone="primary" size="lg">
+              Open Base Camp <ExtIcon />
+            </NeuButton>
+            <a href={`${BASECAMP}/features`} className="text-[19px] font-bold text-link underline underline-offset-4">
+              Features
+            </a>
+            <a href={`${BASECAMP}/pricing`} className="text-[19px] font-bold text-link underline underline-offset-4">
+              Pricing
+            </a>
           </div>
-          <dl className="flex flex-col gap-7">
-            {facts.map((f, i) => (
-              <div key={f.name} className="flex flex-col gap-7">
-                {i > 0 && <Groove className="h-[3px] w-full" />}
-                <div className="flex gap-5">
-                  <span className="grid size-14 shrink-0 place-items-center rounded-full text-link shadow-raised-sm">{f.icon}</span>
-                  <div>
-                    <dt className="font-display text-[24px] leading-tight font-bold tracking-[-0.02em]">{f.name}</dt>
-                    <dd className="mt-1.5 text-[17px] leading-relaxed text-muted-foreground">{f.text}</dd>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </dl>
+        </section>
+
+        <section id="demo" className={`${container} pb-10`}>
+          <Console />
         </section>
 
         <section className={`${container} py-16`}>
