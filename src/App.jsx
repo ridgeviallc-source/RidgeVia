@@ -3,6 +3,7 @@ import Backdrop from './Backdrop'
 import Console from './Console'
 import NeuButton from './NeuButton'
 import Wordmark from './Wordmark'
+import campfire from './campfire-logo.png'
 import { useDesign } from './design'
 import { BrainIcon, ExtIcon, FlagIcon, InboxIcon, MailIcon, UserPlusIcon } from './icons'
 import { ease } from './neu'
@@ -107,7 +108,11 @@ export default function App() {
         </section>
 
         <section id="base-camp" className={`${container} flex min-h-svh flex-col justify-center py-20`}>
-          <h2 className="basecamp-wordmark text-[64px] leading-[1.05] sm:text-[104px] lg:text-[136px]">Base Camp</h2>
+          <h2 className="basecamp-wordmark text-[clamp(40px,13vw,52px)] leading-[1.05] sm:text-[84px] md:text-[104px] lg:text-[136px]">
+            Base Camp
+            {/* The campfire is exactly as tall as the wordmark's ink (capital tops to the bottom of the p: 0.951em), sitting on the descender line. */}
+            <img src={campfire} alt="" aria-hidden="true" className="ml-[0.18em] inline-block h-[0.951em] w-auto align-[-0.233em]" />
+          </h2>
           <p className="mt-8 max-w-[34ch] text-[22px] leading-relaxed text-muted-foreground sm:text-[26px]">
             The autonomous agent for small and medium practices. Better outcomes, with far less data work.
           </p>
