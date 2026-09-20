@@ -71,6 +71,23 @@
    body rule (off-white ground, 14px system font), and unlayered beats @layer base. */
 html {
   scroll-behavior: smooth;
+  /* Soft snap: near a row's top the page settles onto it, a nudge toward one row at a time. "proximity", not
+     "mandatory", so it never fights the scroll or traps anyone between rows. The padding is the sticky bar. */
+  scroll-snap-type: y proximity;
+  scroll-padding-top: 4.75rem;
+}
+.snap-row {
+  scroll-snap-align: start;
+}
+/* The footer is a snap point too, by its bottom edge. Without it the last row's top is the only stop near the
+   end, and the page settles back onto that row instead of letting you reach the footer. */
+.snap-end-row {
+  scroll-snap-align: end;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-snap-type: none;
+  }
 }
 body {
   margin: 0;
