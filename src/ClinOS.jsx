@@ -10,7 +10,7 @@ import { useScrollPlay } from './useScrollPlay'
 
 // Three short conversations that play as you scroll to them (same idea as Base Camp's own landing
 // demos): a question, the agent's working trace, source documents, then the answer and its result.
-// Together they cover reading documents, sending mail, making files and charts, and analysis.
+// Together they cover reading messages and documents, sending mail, making files and graphs, and analysis.
 
 const rise = { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.4, ease } }
 const Groove = () => <div aria-hidden="true" className="h-[3px] w-full rounded-full shadow-groove" />
@@ -82,9 +82,9 @@ const Card = ({ children, className = '' }) => (
   </motion.div>
 )
 
-/* 1. Read documents, cross-reference the chart, draft an email that waits for approval. */
+/* 1. Read messages and documents, then draft an email that waits for approval. */
 const EMAIL_STEPS = [500, 900, 800, 700, 1100, 900]
-const EMAIL_WORK = ['Reading the denial letter…', 'Matching 3 chart notes and 2 PT reports…']
+const EMAIL_WORK = ['Reading the denial letter…', 'Matching 14 patient messages and 2 documents…']
 
 function EmailDraft({ sent, onSend }) {
   return (
@@ -99,16 +99,12 @@ function EmailDraft({ sent, onSend }) {
         <Groove />
       </div>
       <p className="text-[15px] leading-relaxed">
-        Conservative care was completed before this request: six weeks of physical therapy (Jun 4 to Jul 16) and daily NSAIDs. Records attached. Please reverse the denial.
+        Conservative care was completed before this request: six weeks of physical therapy (Jun 4 to Jul 16) and daily NSAIDs. The PT report is attached. Please reverse the denial.
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
         <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-semibold shadow-well">
           <FileIcon size={13} />
           PT_Progress_Jul.pdf
-        </span>
-        <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-semibold shadow-well">
-          <FileIcon size={13} />
-          Chart_Notes_Jun-Jul.pdf
         </span>
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
@@ -134,7 +130,7 @@ function EmailScene() {
   const [sent, setSent] = useState(false)
   return (
     <Frame frameRef={ref} label="Cross-reference, then email" minH={600}>
-      {step >= 1 && <UserMsg>Marcus B.&apos;s insurer denied his MRI. Check the letter against his chart and email the reviewer.</UserMsg>}
+      {step >= 1 && <UserMsg>Marcus B.&apos;s insurer denied his MRI. Check the letter against his messages and documents, then email the reviewer.</UserMsg>}
       {step >= 2 && (
         <AgentRow>
           <Working lines={EMAIL_WORK.slice(0, step - 1)} done={step >= 5} />
@@ -144,7 +140,7 @@ function EmailScene() {
               <Chip icon={<FileIcon size={14} />}>PT_Progress_Jul.pdf</Chip>
             </div>
           )}
-          {step >= 5 && <Answer>The denial says no conservative care was tried. His chart shows six weeks of PT and NSAIDs, Jun 4 to Jul 16. Draft ready.</Answer>}
+          {step >= 5 && <Answer>The denial says no conservative care was tried. His messages and PT report show six weeks of PT and NSAIDs, Jun 4 to Jul 16. Draft ready.</Answer>}
           {step >= 6 && <EmailDraft sent={sent} onSend={() => setSent(true)} />}
         </AgentRow>
       )}
