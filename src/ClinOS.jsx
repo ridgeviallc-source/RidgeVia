@@ -17,7 +17,7 @@ const Groove = () => <div aria-hidden="true" className="h-[3px] w-full rounded-f
 
 function Frame({ frameRef, label, minH, children }) {
   return (
-    <div ref={frameRef} className="rounded-3xl p-5 shadow-well sm:p-7" style={{ minHeight: minH }}>
+    <div ref={frameRef} className="rounded-3xl p-4 shadow-well sm:p-7" style={{ minHeight: minH }}>
       <p className="text-[13px] font-semibold text-muted-foreground">{label}</p>
       <div className="mt-4 flex flex-col gap-4">{children}</div>
     </div>
@@ -39,7 +39,8 @@ function AgentRow({ children }) {
       <span className="mt-0.5 grid size-9 shrink-0 place-items-center rounded-full shadow-raised-sm" title="clinOS">
         <Mark size={18} disc={false} />
       </span>
-      <div className="flex min-w-0 flex-1 flex-col gap-3">{children}</div>
+      {/* On a phone everything but the working steps slides back under the avatar column, so answers and charts use the full width. */}
+      <div className="flex min-w-0 flex-1 flex-col gap-3 max-sm:[&>:not([data-trace])]:-ml-12">{children}</div>
     </div>
   )
 }
@@ -47,7 +48,7 @@ function AgentRow({ children }) {
 // The agent's visible working steps. Finished steps show a check; the newest pulses until the next thing appears.
 function Working({ lines, done }) {
   return (
-    <div className="flex flex-col gap-1.5">
+    <div data-trace className="flex flex-col gap-1.5">
       {lines.map((line, i) => {
         const active = i === lines.length - 1 && !done
         return (
@@ -77,7 +78,7 @@ const Answer = ({ children }) => (
   </motion.p>
 )
 const Card = ({ children, className = '' }) => (
-  <motion.div {...rise} className={`rounded-2xl p-4 shadow-raised-sm sm:p-5 ${className}`}>
+  <motion.div {...rise} className={`rounded-2xl p-3.5 shadow-raised-sm sm:p-5 ${className}`}>
     {children}
   </motion.div>
 )
