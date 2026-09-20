@@ -70,7 +70,7 @@ export default function App() {
             <Wordmark className="text-[19px] sm:text-[24px]" />
           </a>
           <nav aria-label="Primary" className="flex items-center gap-1 rounded-full p-1.5 text-[15px] font-semibold shadow-well">
-            <a href={BASECAMP} className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-muted-foreground hover:text-foreground">
+            <a href={BASECAMP} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-primary-foreground shadow-raised-sm hover:brightness-125">
               Base Camp <ExtIcon />
             </a>
             <a href={MAIL} className="rounded-full px-4 py-2 text-muted-foreground hover:text-foreground">
@@ -83,34 +83,13 @@ export default function App() {
       <main id="main">
         <section>
           <div className={`${container} flex flex-col gap-14 py-10 lg:py-14`}>
-            <motion.div
-              variants={stagger}
-              initial="hidden"
-              animate="show"
-              className="grid items-end gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-14"
-            >
+            <motion.div variants={stagger} initial="hidden" animate="show">
               <motion.h1
                 variants={item}
-                className="font-display text-[42px] leading-[1.03] font-extrabold tracking-[-0.035em] text-balance sm:text-[54px] lg:text-[60px]"
+                className="max-w-[15ch] font-display text-[48px] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance sm:text-[68px] lg:text-[92px]"
               >
-                Modern software for independent medical practices.
+                Simple scaling for your practice.
               </motion.h1>
-              <div className="flex flex-col gap-7">
-                <motion.p variants={item} className="max-w-[46ch] text-[19px] leading-relaxed text-muted-foreground">
-                  <a href={BASECAMP} className="font-bold text-link underline underline-offset-4">
-                    Base Camp
-                  </a>{' '}
-                  is a health agent that knows your practice. It triages autonomously, analyzes your workflows, and transforms your data into actionable signals that facilitate real growth.
-                </motion.p>
-                <motion.div variants={item} className="flex flex-wrap items-center gap-4">
-                  <NeuButton as="a" href={BASECAMP} tone="primary">
-                    See Base Camp <ExtIcon />
-                  </NeuButton>
-                  <NeuButton as="a" href={`${MAIL}%20partnership`}>
-                    Partner with us
-                  </NeuButton>
-                </motion.div>
-              </div>
             </motion.div>
             <Console />
           </div>

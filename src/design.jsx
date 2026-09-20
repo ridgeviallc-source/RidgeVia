@@ -4,7 +4,7 @@ import { buildNeu } from './neu'
 
 // The shipped design. Colors, shadows, type and background are CSS variables, and index.css holds
 // first-paint fallbacks for all of them, so nothing here can flash a different look.
-export const DESIGN = { scheme: 'graphite', bg: 'fluid', wordmark: 'urbanist-lexend', mark: 'mono' }
+export const DESIGN = { scheme: 'graphite', bg: 'fluid', wordmark: 'urbanist-caveat', mark: 'mono' }
 
 // Deep mint. True mint (#6EE7B7) is only 1.4:1 on a light ground; this is 4.6:1.
 const HEALTH = '#087F5B'

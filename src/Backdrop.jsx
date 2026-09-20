@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from 'motion/react'
+import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
 
 // The living gradient behind the page, painted from the scheme's three wash colors (--wash-1..3).
 // Legibility is guaranteed by the colors, not by fading the art: every wash keeps every text color
@@ -25,7 +25,17 @@ const BLOBS = [
   { c: 2, size: '46vmax', left: '30%', top: '18%', dx: [0, 70, -70, 0], dy: [0, -50, 60, 0], s: [1.05, 0.9, 1.1, 1.05], dur: 32 },
 ]
 
+// Slow color breathing: the same three wash colors fading in and out over the base gradient, so hues
+// drift between peach, sage and lavender without ever leaving the validated palette.
+const SHIMMER = [
+  { c: 2, size: '60vmax', left: '-10%', top: '30%', o: [0.05, 0.7, 0.05], dur: 22 },
+  { c: 3, size: '64vmax', left: '50%', top: '5%', o: [0.6, 0.05, 0.6], dur: 26 },
+  { c: 1, size: '56vmax', left: '40%', top: '55%', o: [0.05, 0.65, 0.05], dur: 30 },
+  { c: 3, size: '50vmax', left: '-15%', top: '-10%', o: [0.55, 0.05, 0.55], dur: 34 },
+]
+
 function Fluid() {
+  const reduced = useReducedMotion()
   const { scrollY } = useScroll()
   const y = useTransform(scrollY, [0, 1400], [0, -120])
   return (
@@ -81,6 +91,24 @@ function Fluid() {
             // Flat color core, then a long fade: a cloud of color, not a faint smudge.
             background: `radial-gradient(closest-side, var(--wash-${b.c}) 0%, var(--wash-${b.c}) 38%, transparent 100%)`,
             willChange: 'transform',
+          }}
+        />
+      ))}
+      {SHIMMER.map((b, i) => (
+        <motion.div
+          key={`shimmer${i}`}
+          animate={reduced ? { opacity: 0.3 } : { opacity: b.o, x: [0, 40, 0], y: [0, -30, 0] }}
+          transition={loop(b.dur)}
+          style={{
+            position: 'absolute',
+            left: b.left,
+            top: b.top,
+            width: b.size,
+            height: b.size,
+            borderRadius: '50%',
+            opacity: 0.3,
+            background: `radial-gradient(closest-side, var(--wash-${b.c}) 0%, var(--wash-${b.c}) 30%, transparent 100%)`,
+            willChange: 'opacity, transform',
           }}
         />
       ))}

@@ -23,7 +23,9 @@ export default function Wordmark({ id, size, className = '' }) {
       style={{ gap: wm.gap, ...(size ? { fontSize: size } : {}), lineHeight: 1 }}
     >
       <span style={{ ...face(wm.ridge), color: 'var(--wm-ink)' }}>RidgeVia</span>
-      <span style={{ ...face(wm.health), color: 'var(--health)' }}>Health</span>
+      <span className="health-gloss" style={{ ...face(wm.health), color: 'var(--health)' }}>
+        Health
+      </span>
     </span>
   )
 }

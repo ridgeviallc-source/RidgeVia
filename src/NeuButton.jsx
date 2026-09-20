@@ -7,6 +7,7 @@ const tones = {
   primary: 'bg-primary text-primary-foreground',
 }
 const sizes = {
+  sm: 'h-11 px-5 text-[15px]',
   md: 'h-[52px] px-6 text-[17px]',
   lg: 'h-16 px-8 text-[18px]',
 }
