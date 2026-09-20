@@ -49,4 +49,7 @@ Custom Domains tab; the domain currently resolves to a GoDaddy site-builder plac
 - Palette is Deep Slate: ground `#0B1220`, surface `#121B2C`, text `#FFFFFF`,
   muted `#9AA6B8`, Health accent `#8FC7FF`, action blue `#3D8BFF`. Intentionally cool
   and distinct from Base Camp's warm cream, fig, and clay.
-- Type is Instrument Sans throughout, loaded from Google Fonts.
+- Type is Instrument Sans throughout, loaded from Google Fonts, except the wordmark.
+- The wordmark sets **RidgeVia** in Urbanist 800 and *Health* in Lexend 300, in the Health
+  accent. Both are open-source stand-ins for SK Modernist and Nexa Pro, which are commercial.
+  It lives in the `.wordmark` rules in `styles.css` and is used in the nav and the footer.
