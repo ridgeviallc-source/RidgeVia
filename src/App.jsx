@@ -84,7 +84,8 @@ export default function App() {
 
       <main id="main">
         <section>
-          <div className={`${container} flex flex-col gap-12 py-10 lg:gap-14 lg:py-14`}>
+          {/* The headline gets the whole first screen (the sticky bar is about 4.75rem), so the grid starts below the fold. */}
+          <div className={`${container} flex min-h-[calc(100svh-4.75rem)] flex-col py-10 lg:py-14`}>
             <motion.div variants={stagger} initial="hidden" animate="show">
               <motion.h1
                 variants={item}
@@ -93,6 +94,8 @@ export default function App() {
                 Simply scale your practice.
               </motion.h1>
             </motion.div>
+          </div>
+          <div className={`${container} pt-12 pb-4`}>
             <dl className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:gap-6">
               {facts.map((f) => (
                 <div key={f.name} className="flex flex-col gap-4 rounded-[28px] p-5 shadow-raised sm:p-6">
