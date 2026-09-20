@@ -80,8 +80,16 @@ ul { padding: 0; list-style: none; }
 .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; }
 .brand { display: inline-flex; align-items: center; gap: 11px; }
 .brand img { width: 28px; height: auto; }
-.brand-name { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.02em; }
-.brand-name em, .foot-brand em { font-style: normal; font-weight: 500; color: var(--health); }
+/* Wordmark: RidgeVia in Urbanist 800, Health in Lexend 300. Both are open-source stand-ins for
+   SK Modernist and Nexa Pro, which are commercial. Health takes its own face and the Health accent. */
+.wordmark { display: inline-flex; align-items: baseline; gap: 0.28em; line-height: 1; white-space: nowrap; }
+.wordmark .wm-ridge {
+  font-family: "Urbanist", var(--sans); font-weight: 800; font-size: 1.05em; letter-spacing: -0.03em; color: var(--text);
+}
+.wordmark em {
+  font-family: "Lexend", var(--sans); font-style: normal; font-weight: 300; font-size: 0.9em; letter-spacing: 0; color: var(--health);
+}
+.brand-name { font-size: 1.35rem; }
 .nav nav { display: flex; gap: 26px; font-weight: 500; font-size: 0.95rem; color: var(--muted); }
 .nav nav a:hover { color: var(--text); }
 
@@ -138,7 +146,7 @@ ul { padding: 0; list-style: none; }
 /* ---- Footer ---- */
 .foot { padding: 34px 0 44px; }
 .foot-inner { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 14px 32px; }
-.foot-brand { display: inline-flex; align-items: center; gap: 9px; font-weight: 600; letter-spacing: -0.02em; }
+.foot-brand { display: inline-flex; align-items: center; gap: 9px; font-size: 1.15rem; }
 .foot-brand img { width: 22px; height: auto; }
 .foot-links { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-self: end; color: var(--muted); font-size: 0.94rem; font-weight: 500; }
 .foot-links a:hover { color: var(--text); }
