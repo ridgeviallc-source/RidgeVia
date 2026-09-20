@@ -89,7 +89,10 @@ export default function App() {
                 variants={item}
                 className="max-w-[15ch] font-display text-[48px] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance sm:text-[68px] lg:text-[92px]"
               >
-                Simply scale your practice.
+                <span className="simply-gloss" data-text="Simply">
+                  Simply
+                </span>{' '}
+                scale your practice.
               </motion.h1>
             </motion.div>
             <dl className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:gap-6">
