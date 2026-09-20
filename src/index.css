@@ -82,6 +82,16 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Large "Base Camp": the deep green of river stones, with a gentle light-to-dark shade so it reads as a stone
+   and not a flat fill. Lightest stop keeps 3.6:1 against every background wash, the middle 4.4:1. */
+.rock-green {
+  color: #2f5f48;
+  background-image: linear-gradient(180deg, #3a6c54 0%, #2f5f48 50%, #234a38 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 /* "Simply" in the headline: the lavender of the background, deepened and fully filled in, with a soft gloss.
    Same twin-layer build as the Health wordmark: the word carries the shadow and highlight, and a clipped gradient
    overlay carries the fill, so nothing repaints and no filter runs. The lightest point (the gloss at the top edge)
@@ -89,6 +99,14 @@ body {
 .simply-gloss {
   position: relative;
   display: inline-block;
+  /* The Health wordmark's face and size (Caveat 700 at 1.4x), with the line height pulled in so the taller
+     script does not push the two headline lines apart. */
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  letter-spacing: 0;
+  font-size: 1.4em;
+  line-height: 0.72;
+  margin-right: 0.1em;
   color: #4b2fb8;
   text-shadow: 0 0.02em 0 rgba(255, 255, 255, 0.6), 0 0.06em 0.14em rgba(62, 38, 160, 0.28);
 }
